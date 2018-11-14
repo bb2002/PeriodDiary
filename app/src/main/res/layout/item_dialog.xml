@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="56dp">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/item_dialog_date"
+        android:text="00/00"
+        android:textSize="18sp"
+        android:textColor="@color/defaultText"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_centerVertical="true"
+        android:gravity="center"/>
+    <ImageButton
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:id="@+id/item_dialog_remove"
+        android:src="@drawable/ic_remove"
+        android:scaleType="centerInside"
+        android:background="@null"
+        android:layout_centerVertical="true"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="8dp"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/item_dialog_title"
+        android:text="Title 1"
+        android:layout_toEndOf="@id/item_dialog_date"
+        android:layout_toStartOf="@id/item_dialog_remove"
+        android:layout_centerVertical="true"
+        android:textSize="18sp"
+        android:textColor="@color/defaultText"/>
+</RelativeLayout>

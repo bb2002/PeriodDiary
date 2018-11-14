@@ -8,16 +8,22 @@
             android:label="@string/app_name"
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
-            android:theme="@style/AppTheme">
-        <activity
-                android:name=".MainActivity"
-                android:label="@string/app_name">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
+            android:theme="@style/AppTheme"
+            android:fullBackupContent="false">
 
+        <!-- Main activity init -->
+        <activity android:name=".MainActivity"
+                android:label="@string/app_name" />
+
+        <!-- Splash Activity Define -->
+        <activity android:name=".views.activitys.SplashActivity"
+            android:theme="@style/AppNoActionBarTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-    </application>
 
+    </application>
 </manifest>
