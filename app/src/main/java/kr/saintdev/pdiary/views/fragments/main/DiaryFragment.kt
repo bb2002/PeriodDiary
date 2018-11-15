@@ -1,7 +1,9 @@
 package kr.saintdev.pdiary.views.fragments.main
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
+import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -13,6 +15,7 @@ import kotlinx.android.synthetic.main.fragmn_main_diary.*
 import kr.saintdev.pdiary.R
 import kr.saintdev.pdiary.libs.data.DiaryObject
 import kr.saintdev.pdiary.libs.func.DateFunction
+import kr.saintdev.pdiary.views.activitys.WriteDiaryActivity
 import kr.saintdev.pdiary.views.adapter.DiaryAdapter
 import java.text.SimpleDateFormat
 import java.util.*
@@ -28,6 +31,7 @@ class DiaryFragment : Fragment() {
     private lateinit var listView: ListView
     private lateinit var yearSelector: Spinner
     private lateinit var monthSelector: Spinner
+    private lateinit var diaryWrite: FloatingActionButton
 
     private lateinit var adapter: DiaryAdapter
     private lateinit var yearAdapter: ArrayAdapter<Int>
@@ -40,6 +44,7 @@ class DiaryFragment : Fragment() {
         this.listView = this.v.findViewById(R.id.diary_list)
         this.yearSelector = this.v.findViewById(R.id.diary_selector_year)
         this.monthSelector = this.v.findViewById(R.id.diary_selector_month)
+        this.diaryWrite = this.v.findViewById(R.id.diary_create_new)
 
         // init listview
         this.adapter = DiaryAdapter()
@@ -55,6 +60,11 @@ class DiaryFragment : Fragment() {
         monthAdapter.addAll(DateFunction.getAllMonths())
         this.yearSelector.adapter = yearAdapter
         this.monthSelector.adapter = monthAdapter
+
+        // init listener
+        diaryWrite.setOnClickListener {
+            startActivity(Intent(context!!, WriteDiaryActivity::class.java))
+        }
 
         return this.v
     }

@@ -25,5 +25,8 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".views.activitys.WriteDiaryActivity"
+            android:label="@string/app_name" />
+
     </application>
 </manifest>
