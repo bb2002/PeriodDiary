@@ -10,6 +10,8 @@ import android.widget.TextView
 import kr.saintdev.pdiary.R
 import kr.saintdev.pdiary.libs.data.DiaryObject
 import kr.saintdev.pdiary.libs.data.makeMMDD
+import kr.saintdev.pdiary.modules.db.DBM
+import kr.saintdev.pdiary.modules.db.manager.DiaryDBM
 
 class DiaryAdapter : BaseAdapter() {
     private var items: ArrayList<DiaryObject> = arrayListOf()       // Data container
@@ -26,7 +28,7 @@ class DiaryAdapter : BaseAdapter() {
         dateView.text = item.date.makeMMDD()
         titleView.text = item.question
         removeButton.setOnClickListener {
-            removeItem(position)
+            removeItem(parent.context, position)
         }
 
         return v
@@ -43,7 +45,9 @@ class DiaryAdapter : BaseAdapter() {
         notifyDataSetChanged()
     }
 
-    fun removeItem(idx: Int) {
-
+    fun removeItem(context: Context, idx: Int) {
+        DiaryDBM.removeDiary(DBM.getDB(context), items[idx].uniqid)
+        items.removeAt(idx)
+        notifyDataSetChanged()
     }
 }

@@ -5,5 +5,5 @@ public interface DBQuerys {
             "_id INTEGER PRIMARY KEY AUTOINCREMENT," +
             "question TEXT NOT NULL," +
             "content TEXT NULL," +
-            "created DATE NOT NULL)";
+            "created TEXT NOT NULL)";
 }

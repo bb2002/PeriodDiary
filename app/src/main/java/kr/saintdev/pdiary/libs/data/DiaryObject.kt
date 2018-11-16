@@ -12,16 +12,16 @@ data class DiaryObject(
     val uniqid: Int,
     val question: String,
     val content: String?,
-    val date: Date
+    val date: Calendar
 )
 
-fun Date.makeMMDD() : String {
-    val cal = Calendar.getInstance()
-    cal.time = this
-    return "${cal.get(Calendar.MONTH) + 1}/${cal.get(Calendar.DAY_OF_MONTH)}"
+fun Calendar.makeMMDD() : String {
+    return "${this.get(Calendar.MONTH) + 1}/${this.get(Calendar.DAY_OF_MONTH)}"
 }
 
-fun String.makeSQLDate() : Date {
-    val sdf = SimpleDateFormat("YYYY-MM-DD", Locale.KOREAN)
-    return sdf.parse(this)
+fun String.makeSQLDate() : Calendar {
+    val cal = Calendar.getInstance()
+    val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.KOREAN)
+    cal.time = sdf.parse(this)
+    return cal
 }

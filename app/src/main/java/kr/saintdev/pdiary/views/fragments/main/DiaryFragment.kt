@@ -5,16 +5,17 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.ListView
-import android.widget.Spinner
+import android.widget.*
 import kotlinx.android.synthetic.main.fragmn_main_diary.*
 import kr.saintdev.pdiary.R
 import kr.saintdev.pdiary.libs.data.DiaryObject
 import kr.saintdev.pdiary.libs.func.DateFunction
+import kr.saintdev.pdiary.modules.db.DBM
+import kr.saintdev.pdiary.modules.db.manager.DiaryDBM
 import kr.saintdev.pdiary.views.activitys.WriteDiaryActivity
 import kr.saintdev.pdiary.views.adapter.DiaryAdapter
 import java.text.SimpleDateFormat
@@ -32,6 +33,7 @@ class DiaryFragment : Fragment() {
     private lateinit var yearSelector: Spinner
     private lateinit var monthSelector: Spinner
     private lateinit var diaryWrite: FloatingActionButton
+    private lateinit var getAllDiaries: Button
 
     private lateinit var adapter: DiaryAdapter
     private lateinit var yearAdapter: ArrayAdapter<Int>
@@ -45,13 +47,11 @@ class DiaryFragment : Fragment() {
         this.yearSelector = this.v.findViewById(R.id.diary_selector_year)
         this.monthSelector = this.v.findViewById(R.id.diary_selector_month)
         this.diaryWrite = this.v.findViewById(R.id.diary_create_new)
+        this.getAllDiaries = this.v.findViewById(R.id.diary_selector_all)
 
-        // init listview
+        // inti adapter
         this.adapter = DiaryAdapter()
         this.listView.adapter = this.adapter
-
-        // DB 에서 일기 목록을 가져온다.
-        // this.adapter.refreshItems()
 
         // init spinner
         yearAdapter = ArrayAdapter(context!!, android.R.layout.simple_spinner_dropdown_item)
@@ -61,11 +61,55 @@ class DiaryFragment : Fragment() {
         this.yearSelector.adapter = yearAdapter
         this.monthSelector.adapter = monthAdapter
 
+        // 오늘을 기본값으로 설정
+        val cal = Calendar.getInstance()
+        this.yearSelector.setSelection(cal.get(Calendar.YEAR) - 1970)
+        this.monthSelector.setSelection(cal.get(Calendar.MONTH))
+
+        this.yearSelector.onItemSelectedListener = dateChangeListener
+        this.monthSelector.onItemSelectedListener = dateChangeListener
+
         // init listener
         diaryWrite.setOnClickListener {
             startActivity(Intent(context!!, WriteDiaryActivity::class.java))
         }
 
+        this.getAllDiaries.setOnClickListener {
+            // a모든 일기 호출
+            refreshDiaries()
+        }
+
         return this.v
+    }
+
+    override fun onResume() {
+        super.onResume()
+    }
+
+    private fun refreshDiaries() {
+        // DB 에서 일기 목록을 가져온다.
+        val items = DiaryDBM.getAllDiaries(DBM.getDB(context!!))
+        this.adapter.refreshItems(items)
+        this.adapter.notifyDataSetChanged()
+    }
+
+    /**
+     * 날짜가 변경되었을 경우
+     */
+    private val dateChangeListener = object : AdapterView.OnItemSelectedListener {
+        override fun onNothingSelected(parent: AdapterView<*>?) {
+
+        }
+
+        override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+            val year = yearAdapter.getItem(yearSelector.selectedItemPosition)
+            val month = monthAdapter.getItem(monthSelector.selectedItemPosition)
+
+            if(year != null && month != null) {
+                val items = DiaryDBM.getDayOfDiaries(DBM.getDB(context!!), year, month)
+                adapter.refreshItems(items)
+                adapter.notifyDataSetChanged()
+            }
+        }
     }
 }

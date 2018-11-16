@@ -7,7 +7,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 import kr.saintdev.pdiary.R;
+import kr.saintdev.pdiary.libs.data.DiaryObject;
+import kr.saintdev.pdiary.modules.db.DBM;
+import kr.saintdev.pdiary.modules.db.manager.DiaryDBM;
 import kr.saintdev.pdiary.views.window.DatePickDialog;
 import kr.saintdev.pdiary.views.window.OnDatePickListener;
 
@@ -16,6 +20,7 @@ import java.util.Date;
 
 public class WriteDiaryActivity extends AppCompatActivity {
     private TextView dateView = null;
+    private Calendar selectedDate = Calendar.getInstance();
     private EditText questionEdit = null;
     private EditText contentEdit = null;
     private Button refreshButton = null;
@@ -45,7 +50,17 @@ public class WriteDiaryActivity extends AppCompatActivity {
     private View.OnClickListener saveClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            String questionText = questionEdit.getText().toString();
+            String diaryText = contentEdit.getText().toString();
 
+            if(questionText.isEmpty() || diaryText.isEmpty() || selectedDate == null) {
+                Toast.makeText(getApplicationContext(), "입력하지 않은 내용이 있습니다.", Toast.LENGTH_SHORT).show();
+            } else {
+                DiaryDBM.writeDiary(
+                        new DiaryObject(0, questionText, diaryText, selectedDate), DBM.getDB(getApplicationContext()));
+                Toast.makeText(getApplicationContext(), "입력되었습니다.", Toast.LENGTH_SHORT).show();
+                finish();
+            }
         }
     };
 
@@ -64,6 +79,7 @@ public class WriteDiaryActivity extends AppCompatActivity {
             DatePickDialog dialog = new DatePickDialog(WriteDiaryActivity.this, new OnDatePickListener() {
                 @Override
                 public void onPick(Calendar picked) {
+                    selectedDate = picked;
                     dateView.setText(makeDateToString(picked));
                 }
             });
