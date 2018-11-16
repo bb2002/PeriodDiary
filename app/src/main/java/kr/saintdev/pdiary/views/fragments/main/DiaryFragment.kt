@@ -16,6 +16,7 @@ import kr.saintdev.pdiary.libs.data.DiaryObject
 import kr.saintdev.pdiary.libs.func.DateFunction
 import kr.saintdev.pdiary.modules.db.DBM
 import kr.saintdev.pdiary.modules.db.manager.DiaryDBM
+import kr.saintdev.pdiary.views.activitys.ReadDiaryActivity
 import kr.saintdev.pdiary.views.activitys.WriteDiaryActivity
 import kr.saintdev.pdiary.views.adapter.DiaryAdapter
 import java.text.SimpleDateFormat
@@ -53,6 +54,10 @@ class DiaryFragment : Fragment() {
         this.adapter = DiaryAdapter()
         this.listView.adapter = this.adapter
 
+        this.yearSelector.onItemSelectedListener = dateChangeListener
+        this.monthSelector.onItemSelectedListener = dateChangeListener
+        this.listView.onItemClickListener = onDiarySelectedListener
+
         // init spinner
         yearAdapter = ArrayAdapter(context!!, android.R.layout.simple_spinner_dropdown_item)
         monthAdapter = ArrayAdapter(context!!, android.R.layout.simple_spinner_dropdown_item)
@@ -61,29 +66,18 @@ class DiaryFragment : Fragment() {
         this.yearSelector.adapter = yearAdapter
         this.monthSelector.adapter = monthAdapter
 
-        // 오늘을 기본값으로 설정
-        val cal = Calendar.getInstance()
-        this.yearSelector.setSelection(cal.get(Calendar.YEAR) - 1970)
-        this.monthSelector.setSelection(cal.get(Calendar.MONTH))
-
-        this.yearSelector.onItemSelectedListener = dateChangeListener
-        this.monthSelector.onItemSelectedListener = dateChangeListener
-
         // init listener
-        diaryWrite.setOnClickListener {
-            startActivity(Intent(context!!, WriteDiaryActivity::class.java))
-        }
-
-        this.getAllDiaries.setOnClickListener {
-            // a모든 일기 호출
-            refreshDiaries()
-        }
+        diaryWrite.setOnClickListener { startActivity(Intent(context!!, WriteDiaryActivity::class.java)) }
+        this.getAllDiaries.setOnClickListener { refreshDiaries() }
 
         return this.v
     }
 
     override fun onResume() {
         super.onResume()
+
+        // 오늘을 기본값으로 설정
+        refreshDiariesToday()
     }
 
     private fun refreshDiaries() {
@@ -91,6 +85,20 @@ class DiaryFragment : Fragment() {
         val items = DiaryDBM.getAllDiaries(DBM.getDB(context!!))
         this.adapter.refreshItems(items)
         this.adapter.notifyDataSetChanged()
+    }
+
+    private fun refreshDiariesToday() {
+        // DB 에서 오늘 일기를 가져온다.
+        val cal = Calendar.getInstance()
+        this.yearSelector.setSelection(cal.get(Calendar.YEAR) - 1970)
+        this.monthSelector.setSelection(cal.get(Calendar.MONTH))
+
+        val year = yearAdapter.getItem(yearSelector.selectedItemPosition)
+        val month = monthAdapter.getItem(monthSelector.selectedItemPosition)
+
+        val items = DiaryDBM.getDayOfDiaries(DBM.getDB(context!!), year, month)
+        adapter.refreshItems(items)
+        adapter.notifyDataSetChanged()
     }
 
     /**
@@ -111,5 +119,16 @@ class DiaryFragment : Fragment() {
                 adapter.notifyDataSetChanged()
             }
         }
+    }
+
+    /**
+     * 글이 선택되었을 경우
+     */
+    private val onDiarySelectedListener = AdapterView.OnItemClickListener { parent, view, position, id ->
+        val uniqid = adapter.getItem(position).uniqid
+        val intent = Intent(context, ReadDiaryActivity::class.java)
+        intent.putExtra("uniqid", uniqid)       // 글 고유 번호를 추가 한다.
+
+        startActivity(intent)
     }
 }

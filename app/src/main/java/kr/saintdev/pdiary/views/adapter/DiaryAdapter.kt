@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.TextView
 import kr.saintdev.pdiary.R
 import kr.saintdev.pdiary.libs.data.DiaryObject
@@ -22,7 +23,7 @@ class DiaryAdapter : BaseAdapter() {
 
         val dateView = v.findViewById<TextView>(R.id.item_dialog_date)
         val titleView = v.findViewById<TextView>(R.id.item_dialog_title)
-        val removeButton = v.findViewById<ImageButton>(R.id.item_dialog_remove)
+        val removeButton = v.findViewById<ImageView>(R.id.item_dialog_remove)
         val item = items[position]
 
         dateView.text = item.date.makeMMDD()

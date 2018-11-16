@@ -28,5 +28,8 @@
         <activity android:name=".views.activitys.WriteDiaryActivity"
             android:label="@string/app_name" />
 
+        <activity android:name=".views.activitys.ReadDiaryActivity"
+            android:label="@string/app_name" />
+
     </application>
 </manifest>
