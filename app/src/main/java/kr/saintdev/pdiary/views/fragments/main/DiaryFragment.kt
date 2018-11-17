@@ -124,7 +124,7 @@ class DiaryFragment : Fragment() {
     /**
      * 글이 선택되었을 경우
      */
-    private val onDiarySelectedListener = AdapterView.OnItemClickListener { parent, view, position, id ->
+    private val onDiarySelectedListener = AdapterView.OnItemClickListener { _, _, position, _ ->
         val uniqid = adapter.getItem(position).uniqid
         val intent = Intent(context, ReadDiaryActivity::class.java)
         intent.putExtra("uniqid", uniqid)       // 글 고유 번호를 추가 한다.
