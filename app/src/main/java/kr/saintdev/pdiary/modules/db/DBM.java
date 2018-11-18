@@ -28,6 +28,7 @@ public class DBM extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         // Init Database
         db.execSQL(DBQuerys.CREATE_DIARY_TABLE);        // 일기장 저장 DB 생성
+        db.execSQL(DBQuerys.CREATE_MEMO_TABLE);         // 메모 저장 DB 생성
     }
 
     @Override

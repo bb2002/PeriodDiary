@@ -6,4 +6,8 @@ public interface DBQuerys {
             "question TEXT NOT NULL," +
             "content TEXT NULL," +
             "created TEXT NOT NULL)";
+
+    String CREATE_MEMO_TABLE = "CREATE TABLE pdiary_memo (" +
+            "date TEXT PRIMARY KEY," +
+            "memo TEXT NOT NULL)";
 }
