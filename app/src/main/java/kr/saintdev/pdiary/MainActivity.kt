@@ -39,7 +39,8 @@ class MainActivity : AppCompatActivity() {
      * Fragment mapping.
      */
     private val fragmentArray = arrayOf(
-        DiaryFragment(), MemoFragment(), CalenderFragment())
+        DiaryFragment(), MemoFragment(), CalenderFragment()
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

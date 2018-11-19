@@ -31,5 +31,8 @@
         <activity android:name=".views.activitys.ReadDiaryActivity"
             android:label="@string/app_name" />
 
+        <activity android:name=".views.activitys.FeelSelectActivity"
+            android:label="기분을 선택하세요." />
+
     </application>
 </manifest>
