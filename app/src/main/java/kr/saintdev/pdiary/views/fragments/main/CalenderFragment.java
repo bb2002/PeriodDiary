@@ -14,9 +14,10 @@ import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
 
-import javax.swing.text.View;
-
 import kr.saintdev.pdiary.R;
+import kr.saintdev.pdiary.libs.data.FeelCalendarObject;
+import kr.saintdev.pdiary.modules.db.DBM;
+import kr.saintdev.pdiary.modules.db.manager.FeelCalendarDBM;
 import kr.saintdev.pdiary.views.activitys.FeelSelectActivity;
 
 import static android.app.Activity.RESULT_OK;
@@ -25,6 +26,7 @@ public class CalenderFragment extends Fragment {
     private View v = null;
 
     private MaterialCalendarView calendar = null;
+    private String selectedDate = null;
 
     @Nullable
     @Override
@@ -37,6 +39,10 @@ public class CalenderFragment extends Fragment {
         return this.v;
     }
 
+    private void updateCalender() {
+
+    }
+
     class OnDateChangeHandler implements OnDateSelectedListener {
         @Override
         public void onDateSelected(@NonNull MaterialCalendarView widget, @NonNull CalendarDay date, boolean selected) {
@@ -45,6 +51,7 @@ public class CalenderFragment extends Fragment {
             intent.putExtra("month", date.getMonth());
             intent.putExtra("day", date.getDay());
 
+            selectedDate = date.getYear() + "-" + date.getMonth() + "-" + date.getDay();
             startActivityForResult(intent, 0x33);
         }
     }
@@ -53,7 +60,8 @@ public class CalenderFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == 0x33 && resultCode == RESULT_OK) {
-            Log.d("DIARY", "feel" + data.getIntExtra("feel", -1));
+            int feel = data.getIntExtra("feel", 5);
+            FeelCalendarDBM.writeDateOfFeel(new FeelCalendarObject(selectedDate, feel), DBM.getDB(getContext()));
         }
     }
 }
