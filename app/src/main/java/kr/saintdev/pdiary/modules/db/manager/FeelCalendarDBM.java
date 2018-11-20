@@ -7,6 +7,8 @@ import android.database.sqlite.SQLiteStatement;
 import kr.saintdev.pdiary.libs.data.FeelCalendarObject;
 import kr.saintdev.pdiary.modules.db.DBM;
 
+import java.util.ArrayList;
+
 public class FeelCalendarDBM {
     public static FeelCalendarObject readDateOfFeel(String date, DBM dbm) {
         SQLiteDatabase db = dbm.read();
@@ -38,8 +40,25 @@ public class FeelCalendarDBM {
         }
 
         SQLiteStatement stmt = db.compileStatement(sql);
-        stmt.bindString(1, obj.getDate());
-        stmt.bindLong(2, obj.getFeel());
+        stmt.bindString(2, obj.getDate());
+        stmt.bindLong(1, obj.getFeel());
         stmt.executeInsert();
+    }
+
+    public static ArrayList<FeelCalendarObject> getAllFeels(int year, int month, DBM dbm) {
+        SQLiteDatabase db = dbm.read();
+        Cursor cs = db.rawQuery("SELECT * FROM pdiary_feel_calendar", new String[]{ });
+
+        ArrayList<FeelCalendarObject> days = new ArrayList<>();
+        while(cs.moveToNext()) {
+            String[] date = cs.getString(0).split("-");
+
+            if(Integer.parseInt(date[0]) == year && Integer.parseInt(date[1]) == month) {
+                days.add(
+                        new FeelCalendarObject(cs.getString(0), cs.getInt(1)));
+            }
+        }
+
+        return days;
     }
 }

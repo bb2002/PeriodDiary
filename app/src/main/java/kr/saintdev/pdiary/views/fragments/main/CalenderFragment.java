@@ -1,24 +1,27 @@
 package kr.saintdev.pdiary.views.fragments.main;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.prolificinteractive.materialcalendarview.CalendarDay;
-import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
-import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
+import com.prolificinteractive.materialcalendarview.*;
 
+import com.prolificinteractive.materialcalendarview.spans.DotSpan;
 import kr.saintdev.pdiary.R;
 import kr.saintdev.pdiary.libs.data.FeelCalendarObject;
 import kr.saintdev.pdiary.modules.db.DBM;
 import kr.saintdev.pdiary.modules.db.manager.FeelCalendarDBM;
 import kr.saintdev.pdiary.views.activitys.FeelSelectActivity;
+
+import java.util.ArrayList;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -35,12 +38,15 @@ public class CalenderFragment extends Fragment {
         this.calendar = this.v.findViewById(R.id.main_feel_calender);
 
         this.calendar.setOnDateChangedListener(new OnDateChangeHandler());
+        updateCalender();
 
         return this.v;
     }
 
     private void updateCalender() {
-
+        CalendarDay day = calendar.getCurrentDate();
+        ArrayList<FeelCalendarObject> items = FeelCalendarDBM.getAllFeels(day.getYear(), day.getMonth() + 1, DBM.getDB(getContext()));
+        calendar.addDecorator(new FeelDecorator(items));
     }
 
     class OnDateChangeHandler implements OnDateSelectedListener {
@@ -48,11 +54,46 @@ public class CalenderFragment extends Fragment {
         public void onDateSelected(@NonNull MaterialCalendarView widget, @NonNull CalendarDay date, boolean selected) {
             Intent intent = new Intent(getContext(), FeelSelectActivity.class);
             intent.putExtra("year", date.getYear());
-            intent.putExtra("month", date.getMonth());
+            intent.putExtra("month", date.getMonth() + 1);
             intent.putExtra("day", date.getDay());
 
-            selectedDate = date.getYear() + "-" + date.getMonth() + "-" + date.getDay();
+            selectedDate = date.getYear() + "-" + (date.getMonth()+1) + "-" + date.getDay();
             startActivityForResult(intent, 0x33);
+        }
+    }
+
+    class FeelDecorator implements DayViewDecorator {
+        private ArrayList<FeelCalendarObject> feels = null;
+        private int idx = -1;
+
+        public FeelDecorator(ArrayList<FeelCalendarObject> days) {
+            this.feels = days;
+        }
+
+        @Override
+        public boolean shouldDecorate(CalendarDay day) {
+            for(FeelCalendarObject o : this.feels) {
+                if(Integer.parseInt(o.getDate().split("-")[2]) == day.getDay()) {
+                    idx ++;
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        @Override
+        public void decorate(DayViewFacade view) {
+            FeelCalendarObject obj = this.feels.get(idx);
+            int color = 0;
+            switch(obj.getFeel()) {
+                case 5: color = Color.BLUE; break;
+                case 4: color = Color.CYAN; break;
+                case 3: color = Color.GREEN; break;
+                case 2: color = Color.YELLOW; break;
+                case 1: color = Color.RED; break;
+            }
+            view.addSpan(new DotSpan(15, color));
         }
     }
 
@@ -62,6 +103,7 @@ public class CalenderFragment extends Fragment {
         if(requestCode == 0x33 && resultCode == RESULT_OK) {
             int feel = data.getIntExtra("feel", 5);
             FeelCalendarDBM.writeDateOfFeel(new FeelCalendarObject(selectedDate, feel), DBM.getDB(getContext()));
+            updateCalender();
         }
     }
 }
