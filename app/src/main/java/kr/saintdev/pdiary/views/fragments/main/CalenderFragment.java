@@ -46,7 +46,9 @@ public class CalenderFragment extends Fragment {
     private void updateCalender() {
         CalendarDay day = calendar.getCurrentDate();
         ArrayList<FeelCalendarObject> items = FeelCalendarDBM.getAllFeels(day.getYear(), day.getMonth() + 1, DBM.getDB(getContext()));
-        calendar.addDecorator(new FeelDecorator(items));
+        for(FeelCalendarObject o : items) {
+            calendar.addDecorator(new FeelDecorator(o));
+        }
     }
 
     class OnDateChangeHandler implements OnDateSelectedListener {
@@ -63,36 +65,28 @@ public class CalenderFragment extends Fragment {
     }
 
     class FeelDecorator implements DayViewDecorator {
-        private ArrayList<FeelCalendarObject> feels = null;
-        private int idx = -1;
+        private FeelCalendarObject feel = null;
 
-        public FeelDecorator(ArrayList<FeelCalendarObject> days) {
-            this.feels = days;
+        public FeelDecorator(FeelCalendarObject feel) {
+            this.feel = feel;
         }
 
         @Override
         public boolean shouldDecorate(CalendarDay day) {
-            for(FeelCalendarObject o : this.feels) {
-                if(Integer.parseInt(o.getDate().split("-")[2]) == day.getDay()) {
-                    idx ++;
-                    return true;
-                }
-            }
-
-            return false;
+            return Integer.parseInt(feel.getDate().split("-")[2]) == day.getDay();
         }
 
         @Override
         public void decorate(DayViewFacade view) {
-            FeelCalendarObject obj = this.feels.get(idx);
             int color = 0;
-            switch(obj.getFeel()) {
+            switch(feel.getFeel()) {
                 case 5: color = Color.BLUE; break;
                 case 4: color = Color.CYAN; break;
                 case 3: color = Color.GREEN; break;
                 case 2: color = Color.YELLOW; break;
                 case 1: color = Color.RED; break;
             }
+
             view.addSpan(new DotSpan(15, color));
         }
     }
