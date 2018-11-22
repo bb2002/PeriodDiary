@@ -15,8 +15,16 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Spinner;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+
 import kr.saintdev.pdiary.R;
+import kr.saintdev.pdiary.libs.data.DiaryObject;
+import kr.saintdev.pdiary.libs.func.DataFunction;
+import kr.saintdev.pdiary.modules.db.DBM;
+import kr.saintdev.pdiary.modules.db.manager.DiaryDBM;
 import kr.saintdev.pdiary.views.activitys.ReadDiaryActivity;
+import kr.saintdev.pdiary.views.activitys.WriteDiaryActivity;
 import kr.saintdev.pdiary.views.adapter.DiaryAdapter;
 
 public class DiaryFragment extends Fragment {
@@ -58,65 +66,76 @@ public class DiaryFragment extends Fragment {
         // init spinner
         yearAdapter = new ArrayAdapter(getContext(), android.R.layout.simple_spinner_dropdown_item);
         monthAdapter = new ArrayAdapter(getContext(), android.R.layout.simple_spinner_dropdown_item);
-        yearAdapter.addAll(DateFunction.getAllYears())
-        monthAdapter.addAll(DateFunction.getAllMonths())
-        this.yearSelector.adapter = yearAdapter
-        this.monthSelector.adapter = monthAdapter
+        yearAdapter.addAll(DataFunction.getAllYears());
+        monthAdapter.addAll(DataFunction.getAllMonths());
+        this.yearSelector.setAdapter(yearAdapter);
+        this.monthSelector.setAdapter(monthAdapter);
 
         // init listener
-        diaryWrite.setOnClickListener { startActivity(Intent(context!!, WriteDiaryActivity::class.java)) }
-        this.getAllDiaries.setOnClickListener { refreshDiaries() }
+        diaryWrite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getContext(), WriteDiaryActivity.class));
+            }
+        });
 
-        return this.v
+
+        this.getAllDiaries.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                refreshDiaries();
+            }
+        });
+
+        return this.v;
     }
 
-    override fun onResume() {
-        super.onResume()
-
-        // 오늘을 기본값으로 설정
-        refreshDiariesToday()
+    @Override
+    public void onResume() {
+        super.onResume();
+        refreshDiariesToday();
     }
 
-    private fun refreshDiaries() {
+    private void refreshDiaries() {
         // DB 에서 일기 목록을 가져온다.
-        val items = DiaryDBM.getAllDiaries(DBM.getDB(context!!))
-        this.adapter.refreshItems(items)
-        this.adapter.notifyDataSetChanged()
+        ArrayList<DiaryObject> items = DiaryDBM.getAllDiaries(DBM.getDB(getContext()));
+        this.adapter.refreshItems(items);
+        this.adapter.notifyDataSetChanged();
     }
 
-    private fun refreshDiariesToday() {
+    private void refreshDiariesToday() {
         // DB 에서 오늘 일기를 가져온다.
-        val cal = Calendar.getInstance()
-        this.yearSelector.setSelection(cal.get(Calendar.YEAR) - 1970)
-        this.monthSelector.setSelection(cal.get(Calendar.MONTH))
+        Calendar cal = Calendar.getInstance();
+        this.yearSelector.setSelection(cal.get(Calendar.YEAR) - 1970);
+        this.monthSelector.setSelection(cal.get(Calendar.MONTH));
 
-        val year = yearAdapter.getItem(yearSelector.selectedItemPosition)
-        val month = monthAdapter.getItem(monthSelector.selectedItemPosition)
+        int year = yearAdapter.getItem(yearSelector.getSelectedItemPosition());
+        int month = monthAdapter.getItem(monthSelector.getSelectedItemPosition());
 
-        val items = DiaryDBM.getDayOfDiaries(DBM.getDB(context!!), year, month)
-        adapter.refreshItems(items)
-        adapter.notifyDataSetChanged()
+        ArrayList<DiaryObject> items = DiaryDBM.getDayOfDiaries(DBM.getDB(getContext()), year, month);
+        adapter.refreshItems(items);
+        adapter.notifyDataSetChanged();
     }
 
     /**
      * 날짜가 변경되었을 경우
      */
-    private val dateChangeListener = object : AdapterView.OnItemSelectedListener {
-        override fun onNothingSelected(parent: AdapterView<*>?) {
+    private AdapterView.OnItemSelectedListener dateChangeListener = new AdapterView.OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+            int year = yearAdapter.getItem(yearSelector.getSelectedItemPosition());
+            int month = monthAdapter.getItem(monthSelector.getSelectedItemPosition());
 
+            ArrayList<DiaryObject> items = DiaryDBM.getDayOfDiaries(DBM.getDB(getContext()), year, month);
+            adapter.refreshItems(items);
+            adapter.notifyDataSetChanged();
         }
 
-        override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-            val year = yearAdapter.getItem(yearSelector.selectedItemPosition)
-            val month = monthAdapter.getItem(monthSelector.selectedItemPosition)
+        @Override
+        public void onNothingSelected(AdapterView<?> adapterView) {
 
-            if(year != null && month != null) {
-                val items = DiaryDBM.getDayOfDiaries(DBM.getDB(context!!), year, month)
-                adapter.refreshItems(items)
-                adapter.notifyDataSetChanged()
-            }
         }
-    }
+    };
 
     /**
      * 글이 선택되었을 경우
