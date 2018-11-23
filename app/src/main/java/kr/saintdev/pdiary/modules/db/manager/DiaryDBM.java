@@ -4,7 +4,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 import kr.saintdev.pdiary.libs.data.DiaryObject;
-import kr.saintdev.pdiary.libs.data.DiaryObjectKt;
+import kr.saintdev.pdiary.libs.func.CalendarFunc;
 import kr.saintdev.pdiary.modules.db.DBM;
 
 import java.sql.SQLDataException;
@@ -37,7 +37,7 @@ public class DiaryDBM {
                     csr.getInt(0),
                     csr.getString(1),
                     csr.getString(2),
-                    DiaryObjectKt.makeSQLDate(csr.getString(3))
+                    CalendarFunc.makeSQLDate(csr.getString(3))
             );
 
             csr.close();
@@ -58,7 +58,7 @@ public class DiaryDBM {
                     csr.getInt(0),
                     csr.getString(1),
                     csr.getString(2),
-                    DiaryObjectKt.makeSQLDate(csr.getString(3))
+                    CalendarFunc.makeSQLDate(csr.getString(3))
             ));
         }
 

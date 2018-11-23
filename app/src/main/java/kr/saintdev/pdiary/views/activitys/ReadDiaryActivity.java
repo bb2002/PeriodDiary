@@ -8,7 +8,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import kr.saintdev.pdiary.R;
 import kr.saintdev.pdiary.libs.data.DiaryObject;
-import kr.saintdev.pdiary.libs.data.DiaryObjectKt;
+import kr.saintdev.pdiary.libs.func.CalendarFunc;
 import kr.saintdev.pdiary.modules.db.DBM;
 import kr.saintdev.pdiary.modules.db.manager.DiaryDBM;
 
@@ -28,7 +28,7 @@ public class ReadDiaryActivity extends AppCompatActivity {
             Toast.makeText(this, "글이 존재하지 않습니다.", Toast.LENGTH_SHORT).show();
             finish();
         } else {
-            setTitle(DiaryObjectKt.makeMMDD(this.diary.getDate()));
+            setTitle(CalendarFunc.makeMMDD(this.diary.getDate()));
             ((TextView)findViewById(R.id.diary_read_title)).setText(this.diary.getQuestion());
             ((TextView)findViewById(R.id.diary_read_content)).setText(this.diary.getContent());
         }
