@@ -10,6 +10,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import kr.saintdev.pdiary.R;
 import kr.saintdev.pdiary.libs.data.DiaryObject;
+import kr.saintdev.pdiary.libs.data.QuestionArray;
 import kr.saintdev.pdiary.modules.db.DBM;
 import kr.saintdev.pdiary.modules.db.manager.DiaryDBM;
 import kr.saintdev.pdiary.views.window.DatePickDialog;
@@ -17,6 +18,7 @@ import kr.saintdev.pdiary.views.window.OnDatePickListener;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Random;
 
 public class WriteDiaryActivity extends AppCompatActivity {
     private TextView dateView = null;
@@ -44,6 +46,7 @@ public class WriteDiaryActivity extends AppCompatActivity {
         // init textview
         Calendar cal = Calendar.getInstance();
         dateView.setText(makeDateToString(cal));
+        reSelectQuestion();
     }
 
     // 저장 버튼 클릭 리스너
@@ -68,7 +71,7 @@ public class WriteDiaryActivity extends AppCompatActivity {
     private View.OnClickListener refreshClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-
+            reSelectQuestion();
         }
     };
 
@@ -89,5 +92,11 @@ public class WriteDiaryActivity extends AppCompatActivity {
 
     private String makeDateToString(Calendar cal) {
         return (cal.get(Calendar.YEAR) + " . " + (cal.get(Calendar.MONTH)+1) + " . " + cal.get(Calendar.DATE));
+    }
+
+    private void reSelectQuestion() {
+        Random rd = new Random();
+        int idx = rd.nextInt(QuestionArray.CONTENT.length);
+        questionEdit.setText(QuestionArray.CONTENT[idx]);
     }
 }

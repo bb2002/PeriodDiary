@@ -16,14 +16,13 @@
                 android:label="@string/app_name" />
 
         <!-- Splash Activity Define -->
-        <activity android:name=".views.activitys.SplashActivity"
-            android:theme="@style/AppNoActionBarTheme">
+        <activity android:name=".views.activitys.SplashActivity" android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
 
         <activity android:name=".views.activitys.WriteDiaryActivity"
             android:label="@string/app_name" />
