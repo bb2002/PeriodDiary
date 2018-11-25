@@ -17,15 +17,13 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
-        @SuppressLint("HandlerLeak") Handler handler = new Handler() {
-            @Override
-            public boolean sendMessageAtTime(Message msg, long uptimeMillis) {
+        Handler handler = new Handler() {
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
                 startActivity(new Intent(getApplicationContext(), MainActivity.class));
                 finish();
-                return true;
             }
         };
-
         handler.sendEmptyMessageDelayed(0, 3000);
     }
 }

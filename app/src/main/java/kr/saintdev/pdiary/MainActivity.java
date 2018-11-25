@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
+import android.widget.Toast;
 import kr.saintdev.pdiary.views.fragments.main.CalenderFragment;
 import kr.saintdev.pdiary.views.fragments.main.DiaryFragment;
 import kr.saintdev.pdiary.views.fragments.main.MemoFragment;
@@ -42,6 +43,17 @@ public class MainActivity extends AppCompatActivity {
         BottomNavigationView nav = findViewById(R.id.navigation);
         nav.setOnNavigationItemSelectedListener(this.listener);
         replaceFragment(0);
+    }
+
+    private long lastPressTime = 0;
+    @Override
+    public void onBackPressed() {
+        if(System.currentTimeMillis() - lastPressTime < 3000) {
+            finish();
+        } else {
+            Toast.makeText(this, "한번 더 누르면 종료됩니다.", Toast.LENGTH_SHORT).show();
+            lastPressTime = System.currentTimeMillis();
+        }
     }
 
     /**

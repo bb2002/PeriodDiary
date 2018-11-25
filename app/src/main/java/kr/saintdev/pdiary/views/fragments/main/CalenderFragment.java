@@ -38,12 +38,20 @@ public class CalenderFragment extends Fragment {
         this.calendar = this.v.findViewById(R.id.main_feel_calender);
 
         this.calendar.setOnDateChangedListener(new OnDateChangeHandler());
+        this.calendar.setOnMonthChangedListener(new OnMonthChangedListener() {
+            @Override
+            public void onMonthChanged(MaterialCalendarView widget, CalendarDay date) {
+                updateCalender();
+            }
+        });
         updateCalender();
 
         return this.v;
     }
 
     private void updateCalender() {
+        calendar.removeDecorators();
+
         CalendarDay day = calendar.getCurrentDate();
         ArrayList<FeelCalendarObject> items = FeelCalendarDBM.getAllFeels(day.getYear(), day.getMonth() + 1, DBM.getDB(getContext()));
         for(FeelCalendarObject o : items) {
@@ -83,7 +91,7 @@ public class CalenderFragment extends Fragment {
                 case 5: color = Color.BLUE; break;
                 case 4: color = Color.CYAN; break;
                 case 3: color = Color.GREEN; break;
-                case 2: color = Color.YELLOW; break;
+                case 2: color = Color.rgb(226,26,255); break;
                 case 1: color = Color.RED; break;
             }
 
